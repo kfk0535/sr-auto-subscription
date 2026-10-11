@@ -27,7 +27,7 @@ jobs:
         run: python scripts/aggregate.py
       - name: 提交更新后的订阅
         run: |
-          if git diff --quiet -- subscribe.txt; then
+          if [ -z "$(git status --porcelain -- subscribe.txt)" ]; then
             echo "订阅内容没有变化"
             exit 0
           fi
