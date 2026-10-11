@@ -1,6 +1,6 @@
 # Shadowrocket 自动订阅聚合
 
-本仓库每小时同步一次经过上游可用性测试的公开节点列表，去重后生成 Shadowrocket 可导入的 Base64 订阅文件 `subscribe.txt`。
+本仓库每小时同步一次经过上游可用性测试的公开节点列表，按上游顺序去重后仅保留测速排名靠前的 100 个节点，生成 Shadowrocket 可导入的 Base64 订阅文件 `subscribe.txt`。
 
 ## 首次使用
 
@@ -17,7 +17,7 @@ https://raw.githubusercontent.com/kfk0535/sr-auto-subscription/main/subscribe.tx
 
 ## 可用性测试说明
 
-当前来源是 `Au1rxx/free-vpn-subscriptions` 发布的 V2Ray/Shadowrocket 格式订阅。该上游说明会从多个公开来源收集节点，并通过 sing-box 实际发出 HTTP/HTTPS 代理请求、分两轮筛选后发布。**本仓库同步上游筛选结果，没有在 GitHub Actions 中再逐个发起连接测试。**测试发生在上游的网络环境，节点在你的网络中可能被拦截或已失效；节点也可能在测试后失效。
+当前来源是 `Au1rxx/free-vpn-subscriptions` 发布的 V2Ray/Shadowrocket 格式订阅。该上游说明会从多个公开来源收集节点，并通过 sing-box 实际发出 HTTP/HTTPS 代理请求、分两轮筛选后按延迟排序发布。本仓库保留上游排序靠前的 100 个节点，**本仓库没有在 GitHub Actions 中再逐个发起连接测试。**测试发生在上游的网络环境，节点在你的网络中可能被拦截或已失效；节点也可能在测试后失效。
 
 ## 隐私提醒
 
