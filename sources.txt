@@ -1,0 +1,2 @@
+# 每行一个公开订阅源；可在此追加其它来源 URL
+https://raw.githubusercontent.com/awesome-vpn/awesome-vpn/master/all
