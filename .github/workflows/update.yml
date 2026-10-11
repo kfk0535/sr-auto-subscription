@@ -3,7 +3,7 @@ name: 更新 Shadowrocket 订阅
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "17 * * * *"
   push:
     paths:
       - "sources.txt"
