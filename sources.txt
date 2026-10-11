@@ -1,2 +1,2 @@
-# 每行一个公开订阅源；可在此追加其它来源 URL
-https://raw.githubusercontent.com/awesome-vpn/awesome-vpn/master/all
+# 上游公开订阅源；该项目说明每小时通过真实 HTTP 代理请求测试后发布节点
+https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/output/v2ray-base64.txt
