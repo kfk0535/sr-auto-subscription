@@ -11,12 +11,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = ROOT / "sources.txt"
 OUTPUT = ROOT / "subscribe.txt"
+MAX_NODES = 100
 SCHEMES = (
     "vmess", "vless", "ss", "trojan", "hysteria", "hysteria2", "hy2",
     "tuic", "socks", "socks5", "http", "https", "wireguard", "snell",
     "shadowtls",
 )
-NODE_RE = re.compile(r"(?:" + "|".join(map(re.escape, SCHEMES)) + r")://[^\s\"'<>]+", re.I)
+NODE_RE = re.compile(r"(?:"
+    + "|".join(map(re.escape, SCHEMES))
+    + r")://[^\s\"'<>]+", re.I)
 
 
 def maybe_decode(text: str) -> str:
@@ -48,12 +51,17 @@ def main() -> int:
         line.strip() for line in SOURCES.read_text(encoding="utf-8").splitlines()
         if line.strip() and not line.lstrip().startswith("#")
     ]
-    nodes: set[str] = set()
+    nodes: list[str] = []
+    seen: set[str] = set()
     errors: list[str] = []
     for url in urls:
         try:
             body = maybe_decode(fetch(url))
-            nodes.update(match.rstrip(",;，；") for match in NODE_RE.findall(body))
+            for match in NODE_RE.findall(body):
+                node = match.rstrip(",;，；")
+                if node not in seen:
+                    seen.add(node)
+                    nodes.append(node)
         except Exception as exc:  # one dead feed should not prevent other feeds
             errors.append(f"{url}: {exc}")
 
@@ -63,11 +71,13 @@ def main() -> int:
             print(error, file=sys.stderr)
         return 1
 
+    # Preserve the upstream order (its feed is latency-ranked), then keep only the first 100.
+    selected = nodes[:MAX_NODES]
     # Shadowrocket accepts Base64-encoded subscription content.
-    payload = "\n".join(sorted(nodes)) + "\n"
+    payload = "\n".join(selected) + "\n"
     encoded = base64.b64encode(payload.encode("utf-8")).decode("ascii") + "\n"
     OUTPUT.write_text(encoded, encoding="ascii")
-    print(f"已收集 {len(nodes)} 个唯一节点，写入 subscribe.txt")
+    print(f"已解析 {len(nodes)} 个唯一节点，保留前 {len(selected)} 个上游测速排序靠前节点，写入 subscribe.txt")
     if errors:
         print(f"有 {len(errors)} 个订阅源暂时读取失败：", file=sys.stderr)
         for error in errors:
